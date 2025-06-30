@@ -92,7 +92,7 @@ button:focus-visible {
 
 .typing-cursor {
   display: inline-block;
-  width: 2px;
+  width: 0.5em; /* Make it a block */
   height: 1em; /* Adjust as needed to match font size */
   background-color: currentColor;
   animation: blink 0.7s infinite;
