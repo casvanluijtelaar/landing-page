@@ -89,3 +89,17 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em; /* Adjust as needed to match font size */
+  background-color: currentColor;
+  animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
