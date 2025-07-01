@@ -20,22 +20,55 @@ const contentToType = `
 `;
 
 const typedContentDiv = document.querySelector<HTMLDivElement>('#typed-content');
+const accessibilityButton = document.querySelector<HTMLButtonElement>('#accessibility-button');
 
-if (typedContentDiv) {
-  let i = 0;
-  const typingSpeed = 10000 / contentToType.length; // 10 seconds for the entire content
+let typingTimeout: number; // To store the timeout ID for clearing
 
-  const cursorSpan = document.createElement('span');
-  cursorSpan.classList.add('typing-cursor');
-
-  function typeWriter() {
-    if (i < contentToType.length) {
-      // Append the cursor HTML directly to the content string
-      typedContentDiv.innerHTML = contentToType.substring(0, i + 1) + '<span class="typing-cursor"></span>';
-      i++;
-      setTimeout(typeWriter, typingSpeed);
+function applyAccessibleMode() {
+  clearTimeout(typingTimeout); // Stop any ongoing typing animation
+  if (typedContentDiv) {
+    typedContentDiv.innerHTML = contentToType; // Display all content immediately
+    const cursor = typedContentDiv.querySelector('.typing-cursor');
+    if (cursor) {
+      cursor.remove(); // Remove the cursor
     }
   }
+  document.body.classList.add('accessible-mode'); // Add class for accessible styling
+  if (accessibilityButton) {
+    accessibilityButton.style.display = 'none'; // Hide the button once activated
+  }
+}
 
-  typeWriter();
+if (typedContentDiv) {
+  // Initial state: hide content until typed or accessible mode is active
+  typedContentDiv.innerHTML = '';
+
+  // Check for prefers-reduced-motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    applyAccessibleMode();
+  } else {
+    // Start typing animation if not in accessible mode
+    let i = 0;
+    const typingSpeed = 10000 / contentToType.length; // 10 seconds for the entire content
+
+    const cursorSpan = document.createElement('span');
+    cursorSpan.classList.add('typing-cursor');
+
+    function typeWriter() {
+      if (i < contentToType.length) {
+        typedContentDiv.innerHTML = contentToType.substring(0, i + 1) + '<span class="typing-cursor"></span>';
+        i++;
+        typingTimeout = setTimeout(typeWriter, typingSpeed);
+      } else {
+        // Cursor remains after typing is complete
+      }
+    }
+
+    typeWriter();
+  }
+}
+
+// Event listener for the accessibility button
+if (accessibilityButton) {
+  accessibilityButton.addEventListener('click', applyAccessibleMode);
 }

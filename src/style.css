@@ -50,6 +50,15 @@ body::after {
   pointer-events: none;
 }
 
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+#app {
+  max-width: 1280px;
+  padding: 2rem;
+}
 
 .typing-cursor {
   display: inline-block;
@@ -63,4 +72,47 @@ body::after {
   0% { opacity: 1; }
   50% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+/* Accessibility Button Styling */
+#accessibility-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #00ff41;
+  color: black;
+  border: 2px solid #00ff41;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#accessibility-button:focus {
+  outline: 4px solid yellow; /* High-contrast outline for focus */
+}
+
+/* Accessible Mode Styles */
+body.accessible-mode {
+  background-color: #ffffff;
+  color: #333333;
+  font-family: sans-serif;
+  font-size: 1rem;
+  text-shadow: none;
+}
+
+body.accessible-mode a {
+  color: #0000ee;
+}
+
+body.accessible-mode h1 {
+  font-size: 2em;
+}
+
+body.accessible-mode #app {
+  max-width: 960px;
+  padding: 1rem;
+}
+
+body.accessible-mode::after {
+  content: none; /* Remove scanlines in accessible mode */
 }
