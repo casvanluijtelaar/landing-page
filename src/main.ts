@@ -25,18 +25,15 @@ if (typedContentDiv) {
   let i = 0;
   const typingSpeed = 10000 / contentToType.length; // 10 seconds for the entire content
 
+  const cursorSpan = document.createElement('span');
+  cursorSpan.classList.add('typing-cursor');
+
   function typeWriter() {
     if (i < contentToType.length) {
       // Append the cursor HTML directly to the content string
       typedContentDiv.innerHTML = contentToType.substring(0, i + 1) + '<span class="typing-cursor"></span>';
       i++;
       setTimeout(typeWriter, typingSpeed);
-    } else {
-      // Remove the cursor after typing is complete
-      const finalCursor = typedContentDiv.querySelector('.typing-cursor');
-      if (finalCursor) {
-        finalCursor.remove();
-      }
     }
   }
 
