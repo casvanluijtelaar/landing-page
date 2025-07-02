@@ -19,39 +19,25 @@ a:hover {
   color: #535bf2;
 }
 
-body {
+html, body {
+  padding: 0;
   margin: 0;
   min-width: 320px;
   background-color: #000;
   color: #00ff41;
   font-family: 'VT323', monospace;
-  font-size: 1.5rem;
+  font-size: 1rem;
   text-shadow: 0 0 5px #00ff41;
+   width: 100vw;
   height: 100vh;
   padding: 20px;
   box-sizing: border-box;
   position: relative;
-}
-
-body::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.3),
-    rgba(0, 0, 0, 0.3) 1px,
-    transparent 1px,
-    transparent 2px
-  );
-  pointer-events: none;
+  overflow: hidden;
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 2.5em;
   line-height: 1.1;
 }
 
@@ -87,10 +73,6 @@ h1 {
   cursor: pointer;
 }
 
-#accessibility-button:focus {
-  outline: 4px solid yellow; /* High-contrast outline for focus */
-}
-
 /* Accessible Mode Styles */
 body.accessible-mode {
   background-color: #ffffff;
@@ -113,6 +95,92 @@ body.accessible-mode #app {
   padding: 1rem;
 }
 
-body.accessible-mode::after {
-  content: none; /* Remove scanlines in accessible mode */
+body.accessible-mode .crt-bezel {
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+body.accessible-mode .crt-screen {
+  filter: none;
+  background: none;
+  box-shadow: none;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+body.accessible-mode .crt-scanlines {
+  display: none;
+}
+
+
+/* CRT Bezel (outer border) */
+.crt-bezel {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* CRT Screen (glass area) */
+.crt-screen {
+  width: 90vw;
+  height: 90vh;
+  border-radius: 2vw;
+  background: radial-gradient(ellipse at center, #222 0%, #000 100%);
+  overflow: hidden;
+  position: relative;
+  filter: url(#crt-barrel);
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+/* Scrollable content area */
+.crt-content {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 2vw;
+  box-sizing: border-box;
+}
+
+/* Terminal text styling */
+.crt-text {
+  color: #00ff00;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  text-shadow:
+    0 0 4px #0f0,
+    0 0 8px #0f0,
+    0 0 2px #fff;
+  font-size: 1vw;
+  line-height: 1.4;
+  animation: crt-flicker 1.5s infinite alternate;
+}
+
+@keyframes crt-flicker {
+  0% { opacity: 1; }
+  98% { opacity: 0.95; }
+  100% { opacity: 1; }
+}
+
+/* Scanlines overlay */
+.crt-scanlines {
+  pointer-events: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.15) 4px,
+    rgba(0,0,0,0.15) 6px
+  );
+  mix-blend-mode: multiply;
+  z-index: 2;
 }

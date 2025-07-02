@@ -1,4 +1,4 @@
-import './style.css'
+import './style.css';
 
 const contentToType = `
     <h1>Welcome to My Landing Page</h1>
@@ -22,53 +22,67 @@ const contentToType = `
 const typedContentDiv = document.querySelector<HTMLDivElement>('#typed-content');
 const accessibilityButton = document.querySelector<HTMLButtonElement>('#accessibility-button');
 
-let typingTimeout: number; // To store the timeout ID for clearing
+let typingTimeout: number;
+let isAccessibleMode = false;
+
+function typeWriter() {
+  if (isAccessibleMode || !typedContentDiv) return;
+
+  let i = 0;
+  const typingSpeed = 10000 / contentToType.length;
+
+  const type = () => {
+    if (i < contentToType.length && !isAccessibleMode) {
+      typedContentDiv.innerHTML = contentToType.substring(0, i + 1) + '<span class="typing-cursor"></span>';
+      i++;
+      typingTimeout = setTimeout(type, typingSpeed);
+    } else if (!isAccessibleMode) {
+      // Typing finished, keep cursor
+      typedContentDiv.innerHTML = contentToType + '<span class="typing-cursor"></span>';
+    }
+  };
+  type();
+}
 
 function applyAccessibleMode() {
-  clearTimeout(typingTimeout); // Stop any ongoing typing animation
+  isAccessibleMode = true;
+  clearTimeout(typingTimeout);
   if (typedContentDiv) {
-    typedContentDiv.innerHTML = contentToType; // Display all content immediately
-    const cursor = typedContentDiv.querySelector('.typing-cursor');
-    if (cursor) {
-      cursor.remove(); // Remove the cursor
-    }
+    typedContentDiv.innerHTML = contentToType;
   }
-  document.body.classList.add('accessible-mode'); // Add class for accessible styling
+  document.body.classList.add('accessible-mode');
+  
+}
+
+function removeAccessibleMode() {
+  isAccessibleMode = false;
+  document.body.classList.remove('accessible-mode');
+  if (typedContentDiv) {
+    typedContentDiv.innerHTML = ''; // Clear content to restart typing
+  }
   if (accessibilityButton) {
-    accessibilityButton.style.display = 'none'; // Hide the button once activated
+    accessibilityButton.textContent = 'Disable Terminal Effects';
+    accessibilityButton.setAttribute('aria-label', 'Press this button to reduce motion, render all content, and increase clarity.');
+  }
+  typeWriter();
+}
+
+function toggleAccessibleMode() {
+  if (isAccessibleMode) {
+    removeAccessibleMode();
+  } else {
+    applyAccessibleMode();
   }
 }
 
-if (typedContentDiv) {
-  // Initial state: hide content until typed or accessible mode is active
-  typedContentDiv.innerHTML = '';
-
-  // Check for prefers-reduced-motion
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    applyAccessibleMode();
-  } else {
-    // Start typing animation if not in accessible mode
-    let i = 0;
-    const typingSpeed = 10000 / contentToType.length; // 10 seconds for the entire content
-
-    const cursorSpan = document.createElement('span');
-    cursorSpan.classList.add('typing-cursor');
-
-    function typeWriter() {
-      if (i < contentToType.length) {
-        typedContentDiv.innerHTML = contentToType.substring(0, i + 1) + '<span class="typing-cursor"></span>';
-        i++;
-        typingTimeout = setTimeout(typeWriter, typingSpeed);
-      } else {
-        // Cursor remains after typing is complete
-      }
-    }
-
-    typeWriter();
-  }
+// Initial setup
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  applyAccessibleMode();
+} else {
+  typeWriter();
 }
 
 // Event listener for the accessibility button
 if (accessibilityButton) {
-  accessibilityButton.addEventListener('click', applyAccessibleMode);
+  accessibilityButton.addEventListener('click', toggleAccessibleMode);
 }

@@ -1,13 +1,34 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
-  </head>
-  <body>
-    <button id="accessibility-button" tabindex="0" aria-label="Press this button to reduce motion, render all content, and increase clarity.">Disable Terminal Effects</button>
-    <div id="typed-content"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite + TS</title>
+</head>
+
+<body>
+  <svg width="0" height="0">
+    <filter id="crt-barrel" x="-50%" y="-50%" width="200%" height="200%">
+      <feImage result="map" xlink:href="/barrel-map.png" />
+      <feDisplacementMap in2="map" in="SourceGraphic" scale="40" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </svg>
+
+
+  <div class="crt-bezel">
+    <div class="crt-screen">
+      <div class="crt-content">
+        <button id="accessibility-button" tabindex="0"
+          aria-label="Press this button to reduce motion, render all content, and increase clarity.">Disable
+          TerminalEffects</button>
+        <div id="typed-content"></div>
+      </div>
+      <div class="crt-scanlines"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
