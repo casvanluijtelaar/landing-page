@@ -3,7 +3,6 @@
 :root {
   line-height: 1.5;
   font-weight: 400;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -15,6 +14,7 @@ a {
   color: #646cff;
   text-decoration: underline;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -22,16 +22,11 @@ a:hover {
 html, body {
   padding: 0;
   margin: 0;
-  min-width: 320px;
   background-color: #000;
   color: #00ff41;
   font-family: 'VT323', monospace;
   font-size: 1rem;
   text-shadow: 0 0 5px #00ff41;
-   width: 100vw;
-  height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
   position: relative;
   overflow: hidden;
 }
@@ -39,11 +34,6 @@ html, body {
 h1 {
   font-size: 2.5em;
   line-height: 1.1;
-}
-
-#app {
-  max-width: 1280px;
-  padding: 2rem;
 }
 
 .typing-cursor {
@@ -60,78 +50,9 @@ h1 {
   100% { opacity: 1; }
 }
 
-/* Accessibility Button Styling */
-#accessibility-button {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background-color: #00ff41;
-  color: black;
-  border: 2px solid #00ff41;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-/* Accessible Mode Styles */
-body.accessible-mode {
-  background-color: #ffffff;
-  color: #333333;
-  font-family: sans-serif;
-  font-size: 1rem;
-  text-shadow: none;
-}
-
-body.accessible-mode a {
-  color: #0000ee;
-}
-
-body.accessible-mode h1 {
-  font-size: 2em;
-}
-
-body.accessible-mode #app {
-  max-width: 960px;
-  padding: 1rem;
-}
-
-body.accessible-mode .crt-bezel {
-  background: none;
-  border: none;
-  box-shadow: none;
-}
-
-body.accessible-mode .crt-screen {
-  filter: none;
-  background: none;
-  box-shadow: none;
-  width: 100%;
-  height: 100%;
-  border-radius: 0;
-}
-
-body.accessible-mode .crt-scanlines {
-  display: none;
-}
-
-
-/* CRT Bezel (outer border) */
-.crt-bezel {
-  position: fixed;
-  top: 0; left: 0;
+.crt-screen {
   width: 100vw;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-/* CRT Screen (glass area) */
-.crt-screen {
-  width: 90vw;
-  height: 90vh;
-  border-radius: 2vw;
   background: radial-gradient(ellipse at center, #222 0%, #000 100%);
   overflow: hidden;
   position: relative;
@@ -141,16 +62,13 @@ body.accessible-mode .crt-scanlines {
   justify-content: stretch;
 }
 
-/* Scrollable content area */
 .crt-content {
   width: 100%;
   height: 100%;
   overflow: auto;
-  padding: 2vw;
-  box-sizing: border-box;
+  padding: 3rem;
 }
 
-/* Terminal text styling */
 .crt-text {
   color: #00ff00;
   font-family: 'Fira Mono', 'Consolas', monospace;
@@ -160,16 +78,8 @@ body.accessible-mode .crt-scanlines {
     0 0 2px #fff;
   font-size: 1vw;
   line-height: 1.4;
-  animation: crt-flicker 1.5s infinite alternate;
 }
 
-@keyframes crt-flicker {
-  0% { opacity: 1; }
-  98% { opacity: 0.95; }
-  100% { opacity: 1; }
-}
-
-/* Scanlines overlay */
 .crt-scanlines {
   pointer-events: none;
   position: absolute;
