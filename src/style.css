@@ -20,8 +20,9 @@ a:hover {
 }
 
 html, body {
-  padding: 0;
+  height: 100%;
   margin: 0;
+  padding: 0;
   background-color: #000;
   color: #00ff41;
   font-family: 'VT323', monospace;
@@ -29,6 +30,14 @@ html, body {
   text-shadow: 0 0 5px #00ff41;
   position: relative;
   overflow: hidden;
+}
+
+body {
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 h1 {
@@ -51,11 +60,10 @@ h1 {
 }
 
 .crt-screen {
-  width: 100vw;
-  height: 100vh;
+  width: min(100vw, 150vh);
+  aspect-ratio: 3 / 2;
   background: radial-gradient(ellipse at center, #222 0%, #000 100%);
   overflow: hidden;
-  position: relative;
   filter: url(#crt-barrel);
   display: flex;
   align-items: stretch;
@@ -66,7 +74,7 @@ h1 {
   width: 100%;
   height: 100%;
   overflow: auto;
-  padding: 3rem;
+  padding: min(10vw, 10vh);
 }
 
 .crt-text {

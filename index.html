@@ -8,18 +8,11 @@
 </head>
 
 <body>
-  <svg width="0" height="0">
-    <filter id="crt-barrel">
-      <feImage id="barrel-feimage" result="map" xlink:href="" />
-      <feDisplacementMap in2="map" in="SourceGraphic" scale="80" xChannelSelector="R" yChannelSelector="G" />
-    </filter>
-  </svg>
-  <canvas id="barrel-canvas" style="display:none;"></canvas>
-
-
-  <div class="crt-screen">
-    <div class="crt-content" id="crt-content"></div>
-    <div class="crt-scanlines"></div>
+  <div class="crt-frame">
+    <div class="crt-screen">
+      <div class="crt-content" id="crt-content"></div>
+      <div class="crt-scanlines"></div>
+    </div>
   </div>
 
   <script type="module" src="/src/main.ts"></script>
