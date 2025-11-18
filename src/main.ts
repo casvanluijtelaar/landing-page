@@ -21,15 +21,17 @@ const content = `
 
     <h3>If you want to see more of me, I'm usually hanging out here</h3>
     <ul>
-       <li><a href="https://github.com/apegroup/revolver" target="_blank">Linkedin</a></li>	
-       <li><a href="https://github.com/casvanluijtelaar/reorderable_grid" target="_blank">Github</a></li>
+       <li><a href="https://www.linkedin.com/in/cas-van-luijtelaar/" target="_blank">Linkedin</a></li>	
+       <li><a href="https://github.com/casvanluijtelaar" target="_blank">Github</a></li>
     </ul>
 
     <h2>But ideally, shoot me a <a href="mailto:casvanluijtelaar@hotmail.com">message</a>. so we can hop on a call, or even better, grab a coffee.</h2>
 
-    <p>Cas van Luijtelaar</p>
-    <p><small>Tech lead @ <a href="https://umain.com/" target="_blank">Umain</a></small></p>
-    <p><small>Stockholm</small></p>
+    <p>
+      Cas van Luijtelaar<br>
+      <small>Tech lead @ <a href="https://umain.com/" target="_blank">Umain</a></small><br>
+      <small>Stockholm</small>
+    </p>
 `;
 
 function typeWriter() {
