@@ -1,4 +1,8 @@
 :root {
+  --background-color: #fff;
+  --text-color: #000;
+  --link-color: #0000EE;
+
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -7,18 +11,27 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #121212;
+    --text-color: #eee;
+    --link-color: #8ab4f8;
+  }
+}
+
 a {
-  color: #0000EE; 
+  color: var(--link-color); 
 }
 
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #fff;
-  color: #000;
+  background-color: var(--background-color);
+  color: var(--text-color);
   font-family: monospace;
   font-size: 1rem;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 body {
