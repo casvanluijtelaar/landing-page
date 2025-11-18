@@ -1,3 +1,5 @@
+import './style.css';
+
 const typedContentDiv = document.querySelector<HTMLDivElement>('#app');
 const content = `
     <h2>Software development consultant focussing on helping teams and clients scale software not people. Mainly been deep diving into building and scaling modern mobile solutions.</h2>
