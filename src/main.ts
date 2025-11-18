@@ -1,5 +1,3 @@
-import './style.css';
-
 const typedContentDiv = document.querySelector<HTMLDivElement>('#app');
 const content = `
     <h2>Software development consultant focussing on helping teams and clients scale software not people. Mainly been deep diving into building and scaling modern mobile solutions.</h2>
@@ -36,7 +34,6 @@ const content = `
 
 function typeWriter() {
   if (!typedContentDiv) return;
-  let typingTimeout: number;
 
   let i = 0;
   const typingSpeed = 10000 / content.length;
@@ -45,7 +42,7 @@ function typeWriter() {
     if (i < content.length) {
       typedContentDiv.innerHTML = content.substring(0, i + 1) + '<span class="typing-cursor"></span>';
       i++;
-      typingTimeout = setTimeout(type, typingSpeed);
+      setTimeout(type, typingSpeed);
     } else {
       typedContentDiv.innerHTML = content + '<span class="typing-cursor"></span>';
     }
