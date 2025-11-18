@@ -60,11 +60,8 @@ h1 {
 }
 
 .crt-screen {
-  width: min(100vw, 150vh);
-  aspect-ratio: 3 / 2;
   background: radial-gradient(ellipse at center, #222 0%, #000 100%);
   overflow: hidden;
-  filter: url(#crt-barrel);
   display: flex;
   align-items: stretch;
   justify-content: stretch;

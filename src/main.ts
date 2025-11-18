@@ -2,22 +2,30 @@ import './style.css';
 
 const typedContentDiv = document.querySelector<HTMLDivElement>('#crt-content');
 const content = `
-    <h1>Welcome to My Landing Page</h1>
+    <h2>Software development consultant focussing on helping teams and clients scale software not people. Mainly been deep diving into building and scaling modern mobile solutions.</h2>
 
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-
-    <h2>Key Features:</h2>
+    <h3>I enjoy sharing learnings from big projects and clients</h3>
     <ul>
-      <li><strong>Feature 1:</strong> <a href="#">Lorem ipsum dolor sit amet</a>, consectetur adipiscing elit.</li>
-      <li><strong>Feature 2:</strong> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li>
-      <li><strong>Feature 3:</strong> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <a href="#">Learn more</a>.</li>
+      <li><a href="https://www.youtube.com/watch?v=zDRlEp7r5i0" target="_blank">Building a 45 million MOA app from scratch</a></li>      
+      <li><a href=" https://evolutionjobs.com/exchange/evo-nordics-419-kotlin-multi-platform-discussion/" target="_blank">The power of the cross platform domain layer</a></li>      
+      <li><a href="https://www.youtube.com/watch?v=HSIhkB5bGJs" target="_blank">Cross platform navigation patterns and system</a></li>
     </ul>
 
-    <h2>About Us</h2>
-    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Visit our <a href="#">About Page</a> for more information.</p>
+    <h3>Complex solutions for a specific project should ideally be abstracted and shareable</h3>
+    <ul>
+       <li><a href="https://github.com/apegroup/revolver" target="_blank">Cross platform state management</a></li>	
+       <li><a href="https://github.com/casvanluijtelaar/reorderable_grid" target="_blank">Scaleable, reorderable, animated grid framework</a></li>	
+       <li><a href="https://github.com/casvanluijtelaar/faker.dart" target="_blank">Generate massive amounts of mock data</a>, pre-LLMs 😉</li>	
+       <li><a href="https://github.com/casvanluijtelaar/paged_vertical_calendar" target="_blank">Let me solve the headache of calendar infrastructure for you</a></li>
+    </ul>
 
-    <h2>Contact</h2>
-    <p>If you have any questions, feel free to <a href="mailto:info@example.com">contact us</a>.</p>
+    <h3>If you want to see more of me, I'm usually hanging out here</h3>
+    <ul>
+       <li><a href="https://github.com/apegroup/revolver" target="_blank">Linkedin</a></li>	
+       <li><a href="https://github.com/casvanluijtelaar/reorderable_grid" target="_blank">Github</a></li>
+    </ul>
+
+    <h2>But ideally, shoot me a <a href="mailto:casvanluijtelaar@hotmail.com">message</a>. so we can hop on a call, or even better, grab a coffee.</h2>
 `;
 
 function typeWriter() {
