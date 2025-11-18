@@ -1,6 +1,6 @@
 import './style.css';
 
-const typedContentDiv = document.querySelector<HTMLDivElement>('#crt-content');
+const typedContentDiv = document.querySelector<HTMLDivElement>('#app');
 const content = `
     <h2>Software development consultant focussing on helping teams and clients scale software not people. Mainly been deep diving into building and scaling modern mobile solutions.</h2>
 
@@ -26,6 +26,12 @@ const content = `
     </ul>
 
     <h2>But ideally, shoot me a <a href="mailto:casvanluijtelaar@hotmail.com">message</a>. so we can hop on a call, or even better, grab a coffee.</h2>
+
+    <p>
+      Cas van Luijtelaar<br>
+      <small>Tech lead @ <a href="https://umain.com/" target="_blank">Umain</a></small><br>
+      <small>Stockholm</small>
+    </p>
 `;
 
 function typeWriter() {
