@@ -2,12 +2,14 @@ import './style.css';
 import initialContent from './content.html?raw';
 
 const typingDiv = document.querySelector<HTMLDivElement>('#app');
+const hintDiv = document.querySelector<HTMLDivElement>('#interaction-hint');
 const typingSpeed = 10000 / initialContent.length;
 
 const TYPING_CURSOR_HTML = '<span class="typing-cursor"></span>'
 const CONFIRMATION_MESSAGE_HTML = '<br>Are you sure you want to send this (y/n): ';
 const CONFIRMATION_MESSAGE_SUCCESS_HTML = 'y<br>Message sent!<br><br>';
 const CONFIRMATION_MESSAGE_CANCELED_HTML = 'n<br>Cancelled.<br><br>';
+const MAILTO_DEEPLINK = 'mailto:casvanluijtelaar@hotmail.com';
 
 /**
  * Takes the content from content.html and prints it character by character
@@ -17,11 +19,24 @@ const CONFIRMATION_MESSAGE_CANCELED_HTML = 'n<br>Cancelled.<br><br>';
  */
 async function printInitialContent() {
   if (!typingDiv) return;
+  if (hintDiv) hintDiv.textContent = 'press [enter] to skip';
+  let isSkipped = false;
+
+  const skipHandler = (e: KeyboardEvent) => {
+    if (e.key !== 'Enter') return;   
+    e.preventDefault();
+    isSkipped = true;
+  };
+  document.addEventListener('keydown', skipHandler);
 
   for (let i = 0; i <= initialContent.length; i++) {
+    if (isSkipped) break;
     typingDiv.innerHTML = initialContent.substring(0, i) + TYPING_CURSOR_HTML;
     await new Promise(resolve => setTimeout(resolve, typingSpeed));
   }
+
+  document.removeEventListener('keydown', skipHandler);
+  typingDiv.innerHTML = initialContent + TYPING_CURSOR_HTML;
 
   enableUserTyping();
 }
@@ -34,16 +49,49 @@ async function printInitialContent() {
  */
 function enableUserTyping() {
   if (!typingDiv) return;
+  if (hintDiv) hintDiv.textContent = 'press [enter] to send';
 
   let bufferedContent = ''; // content that cant be errased
   let userContent = ''; // actively typed content, that can be modified
   let isWaitingForConfirmation = false; // whether we are waiting for y/n input
 
-  const sanitize = (str: string) => str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  // switches between user typing, and message confirmation state
+  const interceptTyping = (e: KeyboardEvent) => {
+    if (isWaitingForConfirmation) {
+      handleConfirmationInput(e);
+    } else {
+      handleStandardInput(e);
+    }
+    typingDiv.innerHTML = initialContent + bufferedContent + userContent + TYPING_CURSOR_HTML;
+    window.scrollTo(0, document.body.scrollHeight);
+  }
 
+  // standard state, user is typing, can enter most normal characters
+  // when pressing Backspace, delete those typed characters, and when
+  // pressing Enter, switch to confirmation state
+  const handleStandardInput = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' && userContent.trim().length > 0) {
+      e.preventDefault();
+      userContent += CONFIRMATION_MESSAGE_HTML;
+      isWaitingForConfirmation = true;
+      return;
+    }
+
+    if (e.key === 'Backspace') {
+      userContent = userContent.slice(0, -1);
+      return;
+    }
+
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      userContent += e.key.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+  };
+
+  // when triggering the confermation state, we show an y/n prompt
+  // here we only accept those two inputs, where 'y' sends the message
+  // through a mailto deeplink, and 'n' cancels the sending
   const handleConfirmationInput = (e: KeyboardEvent) => {
     e.preventDefault();
 
@@ -55,7 +103,11 @@ function enableUserTyping() {
 
     if (actions[key]) {
       const suffix = actions[key];
-      console.log(userContent.replaceAll(CONFIRMATION_MESSAGE_HTML, ''));
+
+      if (key === 'y') {
+        const message = userContent.replaceAll(CONFIRMATION_MESSAGE_HTML, '');
+        window.location.href = `${MAILTO_DEEPLINK}?subject=${encodeURIComponent(message)}`;
+      }
 
       bufferedContent += userContent + suffix;
       userContent = '';
@@ -63,37 +115,7 @@ function enableUserTyping() {
     }
   };
 
-  const handleStandardInput = (e: KeyboardEvent) => {
-    // 1. Handle Enter (Trigger Confirmation)
-    if (e.key === 'Enter' && userContent.trim().length > 0) {
-      e.preventDefault();
-      userContent += CONFIRMATION_MESSAGE_HTML;
-      isWaitingForConfirmation = true;
-      return;
-    }
-
-    // 2. Handle Backspace
-    if (e.key === 'Backspace') {
-      userContent = userContent.slice(0, -1);
-      return;
-    }
-
-    // 3. Handle Standard Typing (Single char, no modifiers)
-    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      userContent += sanitize(e.key);
-    }
-  };
-
-  document.addEventListener('keydown', (e) => {
-    if (isWaitingForConfirmation) {
-      handleConfirmationInput(e);
-    } else {
-      handleStandardInput(e);
-    }
-
-    typingDiv.innerHTML = initialContent + bufferedContent + userContent + TYPING_CURSOR_HTML;
-    window.scrollTo(0, document.body.scrollHeight);
-  });
+  document.addEventListener('keydown', interceptTyping);
 }
 
 window.addEventListener('DOMContentLoaded', printInitialContent);

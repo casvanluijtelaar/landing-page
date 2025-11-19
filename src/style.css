@@ -43,6 +43,16 @@ h1, h2, h3 {
   line-height: 1.1;
 }
 
+#interaction-hint {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  font-size: 0.8rem;
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
 .typing-cursor {
   display: inline-block;
   width: 0.5em;
