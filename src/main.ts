@@ -1,56 +1,99 @@
 import './style.css';
+import initialContent from './content.html?raw';
 
-const typedContentDiv = document.querySelector<HTMLDivElement>('#app');
-const content = `
-    <h2>Software development consultant focusing on helping teams and clients scale software not people. Mainly been deep diving into building and scaling modern mobile solutions.</h2>
+const typingDiv = document.querySelector<HTMLDivElement>('#app');
+const typingSpeed = 10000 / initialContent.length;
 
-    <h3>I enjoy sharing learnings from big projects and clients</h3>
-    <ul>
-      <li><a href="https://www.youtube.com/watch?v=zDRlEp7r5i0" target="_blank">Building a 45 million MOA app from scratch</a></li>      
-      <li><a href="https://evolutionjobs.com/exchange/evo-nordics-419-kotlin-multi-platform-discussion/" target="_blank">The power of the cross platform domain layer</a></li>      
-      <li><a href="https://www.youtube.com/watch?v=HSIhkB5bGJs" target="_blank">Cross platform navigation patterns and system</a></li>
-    </ul>
+const TYPING_CURSOR_HTML = '<span class="typing-cursor"></span>'
+const CONFIRMATION_MESSAGE_HTML = '<br>Are you sure you want to send this (y/n): ';
+const CONFIRMATION_MESSAGE_SUCCESS_HTML = 'y<br>Message sent!<br><br>';
+const CONFIRMATION_MESSAGE_CANCELED_HTML = 'n<br>Cancelled.<br><br>';
 
-    <h3>Complex solutions for a specific project should ideally be abstracted and shareable</h3>
-    <ul>
-       <li><a href="https://github.com/apegroup/revolver" target="_blank">Cross platform state management</a></li>	
-       <li><a href="https://github.com/casvanluijtelaar/reorderable_grid" target="_blank">Scalable, reorderable, animated grid framework</a></li>	
-       <li><a href="https://github.com/casvanluijtelaar/faker.dart" target="_blank">Generate massive amounts of mock data</a>, pre-LLMs 😉</li>	
-       <li><a href="https://github.com/casvanluijtelaar/paged_vertical_calendar" target="_blank">Let me solve the headache of calendar infrastructure for you</a></li>
-    </ul>
+/**
+ * Takes the content from content.html and prints it character by character
+ * to the typingDiv element, simulating a typing effect. when it completes,
+ * it enables user typing functionality through [enableUserTyping].
+ * @returns void
+ */
+async function printInitialContent() {
+  if (!typingDiv) return;
 
-    <h3>If you want to see more of me, I'm usually hanging out here</h3>
-    <ul>
-       <li><a href="https://www.linkedin.com/in/cas-van-luijtelaar/" target="_blank">Linkedin</a></li>	
-       <li><a href="https://github.com/casvanluijtelaar" target="_blank">Github</a></li>
-    </ul>
+  for (let i = 0; i <= initialContent.length; i++) {
+    typingDiv.innerHTML = initialContent.substring(0, i) + TYPING_CURSOR_HTML;
+    await new Promise(resolve => setTimeout(resolve, typingSpeed));
+  }
 
-    <h2>But ideally, shoot me a <a href="mailto:casvanluijtelaar@hotmail.com">message</a>. so we can hop on a call, or even better, grab a coffee.</h2>
+  enableUserTyping();
+}
 
-    <p>
-      Cas van Luijtelaar<br>
-      <small>Tech lead @ <a href="https://umain.com/" target="_blank">Umain</a></small><br>
-      <small>Stockholm</small>
-    </p>
-`;
+/**
+ * allows the user to type their own custom content to the screen,
+ * with a confirmation prompt when they press Enter that sends the typed
+ * content as a message.
+ * @returns void
+ */
+function enableUserTyping() {
+  if (!typingDiv) return;
 
-function typeWriter() {
-  if (!typedContentDiv) return;
+  let bufferedContent = ''; // content that cant be errased
+  let userContent = ''; // actively typed content, that can be modified
+  let isWaitingForConfirmation = false; // whether we are waiting for y/n input
 
-  let i = 0;
-  const typingSpeed = 10000 / content.length;
+  const sanitize = (str: string) => str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 
-  const type = () => {
-    if (i < content.length) {
-      typedContentDiv.innerHTML = content.substring(0, i + 1) + '<span class="typing-cursor"></span>';
-      i++;
-      setTimeout(type, typingSpeed);
-    } else {
-      typedContentDiv.innerHTML = content + '<span class="typing-cursor"></span>';
+  const handleConfirmationInput = (e: KeyboardEvent) => {
+    e.preventDefault();
+
+    const key = e.key.toLowerCase();
+    const actions: Record<string, string> = {
+      'y': CONFIRMATION_MESSAGE_SUCCESS_HTML,
+      'n': CONFIRMATION_MESSAGE_CANCELED_HTML
+    };
+
+    if (actions[key]) {
+      const suffix = actions[key];
+      console.log(userContent.replaceAll(CONFIRMATION_MESSAGE_HTML, ''));
+
+      bufferedContent += userContent + suffix;
+      userContent = '';
+      isWaitingForConfirmation = false;
     }
   };
 
-  type();
+  const handleStandardInput = (e: KeyboardEvent) => {
+    // 1. Handle Enter (Trigger Confirmation)
+    if (e.key === 'Enter' && userContent.trim().length > 0) {
+      e.preventDefault();
+      userContent += CONFIRMATION_MESSAGE_HTML;
+      isWaitingForConfirmation = true;
+      return;
+    }
+
+    // 2. Handle Backspace
+    if (e.key === 'Backspace') {
+      userContent = userContent.slice(0, -1);
+      return;
+    }
+
+    // 3. Handle Standard Typing (Single char, no modifiers)
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      userContent += sanitize(e.key);
+    }
+  };
+
+  document.addEventListener('keydown', (e) => {
+    if (isWaitingForConfirmation) {
+      handleConfirmationInput(e);
+    } else {
+      handleStandardInput(e);
+    }
+
+    typingDiv.innerHTML = initialContent + bufferedContent + userContent + TYPING_CURSOR_HTML;
+    window.scrollTo(0, document.body.scrollHeight);
+  });
 }
 
-window.addEventListener('DOMContentLoaded', typeWriter);
+window.addEventListener('DOMContentLoaded', printInitialContent);

@@ -56,3 +56,13 @@ h1, h2, h3 {
   50% { opacity: 0; }
   100% { opacity: 1; }
 }
+
+input {      
+  background-color: transparent;
+  border: none;                                                                                      
+  outline: none;                                                                                     
+  color: white;  
+  caret: bar manual;
+  padding: 0;
+  margin: 0;
+}                                                                                    
