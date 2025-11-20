@@ -3,30 +3,33 @@ import initialContent from './content.html?raw';
 
 const typingDiv = document.querySelector<HTMLDivElement>('#app');
 const hintDiv = document.querySelector<HTMLDivElement>('#interaction-hint');
+const terminalInput = document.querySelector<HTMLInputElement>('#terminal-input');
+
 const typingSpeed = 10000 / initialContent.length;
 
-const TYPING_CURSOR_HTML = '<span class="typing-cursor"></span>'
+const TYPING_CURSOR_HTML = '<span class="typing-cursor"></span>';
 const CONFIRMATION_MESSAGE_HTML = '<br>Are you sure you want to send this (y/n): ';
 const CONFIRMATION_MESSAGE_SUCCESS_HTML = 'y<br>Message sent!<br><br>';
 const CONFIRMATION_MESSAGE_CANCELED_HTML = 'n<br>Cancelled.<br><br>';
 const MAILTO_DEEPLINK = 'mailto:casvanluijtelaar@hotmail.com';
 
+
 /**
- * Takes the content from content.html and prints it character by character
- * to the typingDiv element, simulating a typing effect. when it completes,
- * it enables user typing functionality through [enableUserTyping].
- * @returns void
+ * Simulates typing the initial content.
  */
 async function printInitialContent() {
-  if (!typingDiv) return;
-  if (hintDiv) hintDiv.textContent = 'press [enter] to skip';
+  if (!typingDiv || !hintDiv) return;
+  hintDiv.textContent = 'press [enter] to skip';
   let isSkipped = false;
 
-  const skipHandler = (e: KeyboardEvent) => {
-    if (e.key !== 'Enter') return;   
-    e.preventDefault();
-    isSkipped = true;
+  const skipHandler = (e: Event) => {
+    if (e.type === 'click' || (e as KeyboardEvent).key === 'Enter') {
+      e.preventDefault();
+      isSkipped = true;
+    }
   };
+
+  hintDiv.addEventListener('click', skipHandler);
   document.addEventListener('keydown', skipHandler);
 
   for (let i = 0; i <= initialContent.length; i++) {
@@ -35,87 +38,111 @@ async function printInitialContent() {
     await new Promise(resolve => setTimeout(resolve, typingSpeed));
   }
 
+  hintDiv.removeEventListener('click', skipHandler);
   document.removeEventListener('keydown', skipHandler);
+  
   typingDiv.innerHTML = initialContent + TYPING_CURSOR_HTML;
 
   enableUserTyping();
 }
 
 /**
- * allows the user to type their own custom content to the screen,
- * with a confirmation prompt when they press Enter that sends the typed
- * content as a message.
- * @returns void
+ * Enables the unified typing interface.
  */
 function enableUserTyping() {
-  if (!typingDiv) return;
-  if (hintDiv) hintDiv.textContent = 'press [enter] to send';
+  if (!typingDiv || !hintDiv || !terminalInput) return;
+  hintDiv.textContent = 'press [enter] to send';
+  
+  // Helper to force cursor to the end of the input
+  const forceCursorToEnd = () => {
+    const len = terminalInput.value.length;
+    terminalInput.setSelectionRange(len, len);
+  };
 
-  let bufferedContent = ''; // content that cant be errased
-  let userContent = ''; // actively typed content, that can be modified
-  let isWaitingForConfirmation = false; // whether we are waiting for y/n input
+  // Focus logic: Ensure we are focused and at the end
+  const focusInput = () => {
+    terminalInput.focus();
+    forceCursorToEnd();
+  };
 
-  // switches between user typing, and message confirmation state
-  const interceptTyping = (e: KeyboardEvent) => {
-    if (isWaitingForConfirmation) {
-      handleConfirmationInput(e);
-    } else {
-      handleStandardInput(e);
-    }
-    typingDiv.innerHTML = initialContent + bufferedContent + userContent + TYPING_CURSOR_HTML;
+  // Initialize focus
+  focusInput();
+  terminalInput.value = '';
+
+  // Maintain focus if user clicks anywhere on the page
+  document.addEventListener('click', focusInput);
+
+  let bufferedContent = ''; 
+  let tempMessage = ''; 
+  let isWaitingForConfirmation = false;
+
+  const sanitize = (str: string) => {
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;');
+  };
+
+  const updateDisplay = () => {
+    const currentTyping = isWaitingForConfirmation ? '' : sanitize(terminalInput.value);
+    typingDiv.innerHTML = initialContent + bufferedContent + currentTyping + TYPING_CURSOR_HTML;
     window.scrollTo(0, document.body.scrollHeight);
-  }
-
-  // standard state, user is typing, can enter most normal characters
-  // when pressing Backspace, delete those typed characters, and when
-  // pressing Enter, switch to confirmation state
-  const handleStandardInput = (e: KeyboardEvent) => {
-    if (e.key === 'Enter' && userContent.trim().length > 0) {
-      e.preventDefault();
-      userContent += CONFIRMATION_MESSAGE_HTML;
-      isWaitingForConfirmation = true;
-      return;
-    }
-
-    if (e.key === 'Backspace') {
-      userContent = userContent.slice(0, -1);
-      return;
-    }
-
-    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      userContent += e.key.replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    }
   };
 
-  // when triggering the confermation state, we show an y/n prompt
-  // here we only accept those two inputs, where 'y' sends the message
-  // through a mailto deeplink, and 'n' cancels the sending
-  const handleConfirmationInput = (e: KeyboardEvent) => {
-    e.preventDefault();
+  terminalInput.addEventListener('input', () => {
+    if (isWaitingForConfirmation) {
+      const val = terminalInput.value.toLowerCase();
+      const lastChar = val.slice(-1);
 
-    const key = e.key.toLowerCase();
-    const actions: Record<string, string> = {
-      'y': CONFIRMATION_MESSAGE_SUCCESS_HTML,
-      'n': CONFIRMATION_MESSAGE_CANCELED_HTML
-    };
-
-    if (actions[key]) {
-      const suffix = actions[key];
-
-      if (key === 'y') {
-        const message = userContent.replaceAll(CONFIRMATION_MESSAGE_HTML, '');
-        window.location.href = `${MAILTO_DEEPLINK}?subject=${encodeURIComponent(message)}`;
+      if (lastChar === 'y') {
+        bufferedContent += CONFIRMATION_MESSAGE_SUCCESS_HTML;
+        window.location.href = `${MAILTO_DEEPLINK}?subject=${encodeURIComponent(tempMessage)}`;
+        resetTypingState();
+      } else if (lastChar === 'n') {
+        bufferedContent += CONFIRMATION_MESSAGE_CANCELED_HTML;
+        resetTypingState();
+      } else {
+        terminalInput.value = '';
       }
-
-      bufferedContent += userContent + suffix;
-      userContent = '';
-      isWaitingForConfirmation = false;
+    } else {
+      updateDisplay();
     }
-  };
+  });
 
-  document.addEventListener('keydown', interceptTyping);
+  // LISTENER 2: Keydown Event (Control Keys)
+  terminalInput.addEventListener('keydown', (e) => {
+    // 1. Block Navigation Keys to prevent moving cursor
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      return;
+    }
+
+    // 2. Handle Enter
+    if (e.key === 'Enter') {
+      e.preventDefault();
+
+      if (!isWaitingForConfirmation) {
+        const message = terminalInput.value;
+        if (message.trim().length > 0) {
+          tempMessage = message;
+          bufferedContent += sanitize(message) + CONFIRMATION_MESSAGE_HTML;
+          isWaitingForConfirmation = true;
+          
+          terminalInput.value = ''; 
+          hintDiv.textContent = 'press y or n';
+          updateDisplay();
+        }
+      }
+    }
+  });
+
+  const resetTypingState = () => {
+    isWaitingForConfirmation = false;
+    tempMessage = '';
+    terminalInput.value = '';
+    hintDiv.textContent = 'press [enter] to send';
+    updateDisplay();
+    forceCursorToEnd();
+  }
 }
 
 window.addEventListener('DOMContentLoaded', printInitialContent);

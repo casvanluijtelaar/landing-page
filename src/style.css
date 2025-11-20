@@ -54,6 +54,13 @@ h3 {
   opacity: 0.5;
   pointer-events: none;
   transition: opacity 0.3s;
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+}
+
+#interaction-hint:hover {
+  opacity: 1;
 }
 
 .terminal-divider {
@@ -97,12 +104,13 @@ h3 {
   }
 }
 
-input {
-  background-color: transparent;
-  border: none;
-  outline: none;
-  color: white;
-  caret: bar manual;
-  padding: 0;
-  margin: 0;
+#terminal-input {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  height: 1px;
+  width: 1px;
+  pointer-events: none; 
+  font-size: 16px; /* Prevents automatic zoom on iOS inputs */
 }
