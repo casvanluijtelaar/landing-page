@@ -65,6 +65,7 @@ function enableUserTyping() {
   const focusInput = () => {
     terminalInput.focus();
     forceCursorToEnd();
+    window.scrollTo(0, document.body.scrollHeight);
   };
 
   focusInput();
