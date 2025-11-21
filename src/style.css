@@ -2,6 +2,8 @@
   --background-color: #fff;
   --text-color: #000;
   --link-color: #0000EE;
+  --highlight-color: #d81e5b;
+  --prompt-color: #555;
 
   line-height: 1.5;
   font-weight: 400;
@@ -16,11 +18,19 @@
     --background-color: #121212;
     --text-color: #eee;
     --link-color: #8ab4f8;
+    --highlight-color: #00ff41;
+    --prompt-color: #888;
   }
 }
 
 a {
   color: var(--link-color);
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+}
+
+a:hover {
+  border-bottom-style: solid;
 }
 
 html,
@@ -30,7 +40,7 @@ body {
   padding: 0;
   background-color: var(--background-color);
   color: var(--text-color);
-  font-family: monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 1rem;
   transition: background-color 0.3s, color 0.3s;
 }
@@ -38,12 +48,69 @@ body {
 body {
   padding: 2rem;
   box-sizing: border-box;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-h1,
-h2,
-h3 {
-  line-height: 1.1;
+#app {
+  width: 100%;
+  overflow-wrap: break-word;  
+  word-break: break-word;
+}
+
+h1, h2, h3 {
+  line-height: 1.2;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+p {
+  margin-top: 0;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0;
+}
+
+li {
+  margin-bottom: 0.25rem;
+}
+
+li::before {
+  content: '- ';
+  opacity: 0.5;
+}
+
+.ascii-art {
+  font-family: monospace;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: 2rem;
+  white-space: pre;
+  overflow-x: hidden;
+  color: var(--text-color);
+}
+
+.prompt {
+  color: var(--prompt-color);
+  margin-right: 0.5rem;
+  user-select: none;
+}
+
+.highlight {
+  color: var(--highlight-color);
+  font-weight: bold;
+}
+
+.signature {
+  margin-top: 2rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--prompt-color);
 }
 
 #interaction-hint {
@@ -64,7 +131,7 @@ h3 {
 }
 
 .terminal-divider {
-  margin: 1rem 0;
+  margin: 2rem 0 1rem 0;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -84,24 +151,16 @@ h3 {
 
 .typing-cursor {
   display: inline-block;
-  width: 0.5em;
-  height: 1em;
+  width: 0.6em;
+  height: 1.2em;
   background-color: currentColor;
+  vertical-align: text-bottom;
   animation: blink 0.7s infinite;
 }
 
 @keyframes blink {
-  0% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 #terminal-input {
@@ -112,5 +171,5 @@ h3 {
   height: 1px;
   width: 1px;
   pointer-events: none; 
-  font-size: 16px; /* Prevents automatic zoom on iOS inputs */
+  font-size: 16px; 
 }
